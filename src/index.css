@@ -1,4 +1,30 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
+
+@theme {
+  --color-primary: #111111;
+  --color-background: #ffffff;
+  --color-surface: #f8f8f8;
+  --color-title: #111111;
+  --color-secondary: #666666;
+  --color-muted: #999999;
+  --color-border: #e5e5e5;
+  --color-error: #dc2626;
+  --color-success: #16a34a;
+}
+
+@theme {
+  --font-sans: "Inter", sans-serif;
+
+  --text-heading-1: 40px;
+  --text-heading-2: 32px;
+  --text-heading-3: 24px;
+  --text-heading-4: 20px;
+
+  --text-body: 16px;
+  --text-small: 14px;
+  --text-caption: 12px;
+}
 
 * {
   box-sizing: border-box;
@@ -10,4 +36,9 @@ html {
 
 body {
   margin: 0;
+  font-family: "Inter", sans-serif;
+}
+
+button {
+  cursor: pointer;
 }

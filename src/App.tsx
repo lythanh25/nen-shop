@@ -1,12 +1,15 @@
+import { BrowserRouter } from "react-router-dom";
+import AppRouter from "./routes/AppRouter.tsx";
+import Header from "./components/layout/Header.tsx";
+
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="rounded-xl bg-white p-8 shadow-lg">
-        <h1 className="text-4xl font-bold text-blue-600">NenShop</h1>
-
-        <p className="mt-3 text-gray-600">My first real frontend project.</p>
-      </div>
-    </div>
+    <BrowserRouter>
+      <main className="min-h-screen bg-background px-4 py-10">
+        <Header />
+        <AppRouter />
+      </main>
+    </BrowserRouter>
   );
 }
 
