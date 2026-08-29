@@ -34,7 +34,7 @@ function App() {
   }, []);
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/nen-shop">
       <div className="min-h-screen  bg-background">
         <aside
           className={`fixed left-0 top-0 z-50 h-screen w-64 bg-background p-6 shadow-xl transition-transform duration-300 md:hidden ${
