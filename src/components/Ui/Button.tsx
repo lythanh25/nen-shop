@@ -30,7 +30,7 @@ export default function Button({
   return (
     <button
       className={`
-        inline-flex items-center justify-center
+         items-center justify-center
         rounded-lg
         font-medium
         transition-colors

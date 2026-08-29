@@ -3,15 +3,54 @@ type CartSummaryProps = {
 };
 
 export default function CartSummary({ subtotal }: CartSummaryProps) {
+  const shipping = 0;
+  const total = subtotal + shipping;
+
   return (
-    <div>
-      <h2>Cart Summary</h2>
+    <aside className="h-fit rounded-xl border border-border p-5 lg:sticky lg:top-28">
+      <h2 className="text-lg font-semibold">Order Summary</h2>
 
-      <p>Subtotal: ${subtotal}</p>
-      <p>Shipping: Free</p>
-      <p>Total: ${subtotal}</p>
+      <div className="mt-6 space-y-4 text-sm">
+        {/* Subtotal */}
+        <div className="flex items-center justify-between">
+          <span className="text-secondary">Subtotal</span>
 
-      <button>Checkout</button>
-    </div>
+          <span className="font-medium">${subtotal.toFixed(2)}</span>
+        </div>
+
+        {/* Shipping */}
+        <div className="flex items-center justify-between">
+          <span className="text-secondary">Shipping</span>
+
+          <span className="font-medium text-success">Free</span>
+        </div>
+
+        <div className="border-t border-border pt-4">
+          <div className="flex items-center justify-between">
+            <span className="font-semibold">Total</span>
+
+            <span className="text-xl font-bold">${total.toFixed(2)}</span>
+          </div>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        className="mt-6 flex w-full items-center justify-center rounded-lg bg-primary px-5 py-3 font-medium text-background transition-colors hover:bg-secondary"
+      >
+        Proceed to Checkout
+      </button>
+
+      <a
+        href="/products"
+        className="mt-3 flex w-full items-center justify-center rounded-lg border border-border px-5 py-3 text-sm font-medium transition-colors hover:bg-surface"
+      >
+        Continue Shopping
+      </a>
+
+      <p className="mt-5 text-center text-xs leading-5 text-secondary">
+        Free shipping on all orders.
+      </p>
+    </aside>
   );
 }

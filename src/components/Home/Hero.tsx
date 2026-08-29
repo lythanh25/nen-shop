@@ -3,21 +3,43 @@ import Button from "../Ui/Button";
 
 export default function Hero() {
   return (
-    <div className="flex gap-2 items-center mt-2 justify-between flex-col md:flex-row">
-      <div className="flex flex-col gap-2 order-last md:order-first">
-        <h2>MODERN FASHION </h2>
-        <p>Discover your style</p>
-        <Link to="/products">
-          <Button>{"Shop Now"}</Button>
-        </Link>
+    <section className="relative mt-2 min-h-[500px] overflow-hidden rounded-xl">
+      <img
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTr_NdKlJNES2EhMaGBSngr8SiG6TCpLH9KDDielxaoeA&s=10"
+        alt="Modern fashion"
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+
+      <div className="absolute inset-0 bg-black/30" />
+
+      <div className="relative z-10 flex min-h-[500px] items-center px-6 py-12 md:px-12 lg:px-16">
+        <div className="flex max-w-lg flex-col gap-3 text-white">
+          <p className="text-sm font-medium tracking-widest">NEW COLLECTION</p>
+
+          <h2 className="text-heading-2 font-bold">MODERN FASHION</h2>
+
+          <p className="max-w-md">
+            Discover premium fashion and accessories that complement your
+            lifestyle.
+          </p>
+
+          <Link to="/products">
+            <Button className="mt-2 flex items-center gap-3">
+              Shop Now
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 512 512"
+                className="h-3 w-3"
+              >
+                <path
+                  fill="currentColor"
+                  d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l370.7 0-105.4 105.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"
+                />
+              </svg>
+            </Button>
+          </Link>
+        </div>
       </div>
-      <div>
-        <img
-          className="w-full max-w-md"
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAPf_062JKWOBQr9rKxfyjLtlwzCn6Wwx_fJ6vQDIAgQ&s=10"
-          alt="Hero image"
-        />
-      </div>
-    </div>
+    </section>
   );
 }
