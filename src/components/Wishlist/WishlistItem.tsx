@@ -1,15 +1,13 @@
 import { Link } from "react-router-dom";
-import { useWishListStore } from "../../store/wishlistStore";
+
 import { useCartStore } from "../../store/cartStore";
+import { useWishListStore } from "../../store/wishlistStore";
+import { useToast } from "../../hooks/useToast";
+
+import type { Product } from "../../types/products";
 
 type WishlistItemProps = {
-  item: {
-    id: number;
-    name: string;
-    category: string;
-    price: number;
-    image: string;
-  };
+  item: Product;
 };
 
 export default function WishlistItem({ item }: WishlistItemProps) {
@@ -19,12 +17,18 @@ export default function WishlistItem({ item }: WishlistItemProps) {
 
   const addToCart = useCartStore((state) => state.addToCart);
 
+  const addToast = useToast((state) => state.addToast);
+
   function handleRemove() {
     removeFromWishlist(item.id);
+
+    addToast("Removed from wishlist");
   }
 
   function handleAddToCart() {
     addToCart(item);
+
+    addToast("Added to cart");
   }
 
   return (
@@ -42,6 +46,7 @@ export default function WishlistItem({ item }: WishlistItemProps) {
 
       {/* Content */}
       <div className="flex min-w-0 flex-1 flex-col justify-between">
+        {/* Product Info */}
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-secondary">
             {item.category}

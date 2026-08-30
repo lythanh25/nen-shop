@@ -1,12 +1,15 @@
 import { Link } from "react-router-dom";
+
 import WishlistItem from "../../components/Wishlist/WishlistItem";
 import { useWishListStore } from "../../store/wishlistStore";
 
 export default function WishlistPage() {
   const wishlistItems = useWishListStore((state) => state.wishlistItems);
 
+  const itemCount = wishlistItems.length;
+
   return (
-    <section className="mt-6 pb-12">
+    <section className="pb-16 pt-6">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-heading-3 font-bold">Wishlist</h1>
@@ -16,8 +19,8 @@ export default function WishlistPage() {
         </p>
       </div>
 
-      {/* Empty */}
-      {wishlistItems.length === 0 ? (
+      {/* Empty Wishlist */}
+      {itemCount === 0 ? (
         <div className="flex min-h-[400px] items-center justify-center rounded-2xl border border-border">
           <div className="max-w-md px-6 text-center">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-surface text-3xl">
@@ -46,19 +49,18 @@ export default function WishlistPage() {
           {/* Wishlist Header */}
           <div className="mb-6 flex items-center justify-between">
             <p className="text-sm text-secondary">
-              {wishlistItems.length}{" "}
-              {wishlistItems.length === 1 ? "item" : "items"}
+              {itemCount} {itemCount === 1 ? "item" : "items"}
             </p>
 
             <Link
               to="/products"
               className="text-sm font-medium underline underline-offset-4 transition-colors hover:text-secondary"
             >
-              Continue shopping
+              Continue Shopping
             </Link>
           </div>
 
-          {/* Items */}
+          {/* Wishlist Items */}
           <div className="flex flex-col gap-4">
             {wishlistItems.map((item) => (
               <WishlistItem key={item.id} item={item} />

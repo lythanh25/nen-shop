@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import products from "../../data/products";
-import { useWishListStore } from "../../store/wishlistStore";
 import { useCartStore } from "../../store/cartStore";
+import { useWishListStore } from "../../store/wishlistStore";
+import { useToast } from "../../hooks/useToast";
 
 import ProductGrid from "../../components/Product/ProductGrid";
 import Button from "../../components/Ui/Button";
@@ -13,23 +14,23 @@ const sizes = ["S", "M", "L", "XL"];
 export default function ProductDetailPage() {
   const { id } = useParams();
 
-  const addToWishlist = useWishListStore((state) => state.addToWishlist);
-
-  const wishlistItems = useWishListStore((state) => state.wishlistItems);
-
   const addToCart = useCartStore((state) => state.addToCart);
+
+  const isInWishlist = useWishListStore((state) =>
+    state.isInWishlist(Number(id)),
+  );
+
+  const toggleWishlist = useWishListStore((state) => state.toggleWishlist);
+
+  const addToast = useToast((state) => state.addToast);
 
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("M");
 
-  /*
-   * find() có thể trả về undefined.
-   * Vì vậy dùng foundProduct để kiểm tra trước.
-   */
   const foundProduct = products.find((item) => item.id === Number(id));
 
   /*
-   * Nếu không tìm thấy sản phẩm
+   * Product not found
    */
   if (!foundProduct) {
     return (
@@ -58,19 +59,10 @@ export default function ProductDetailPage() {
   }
 
   /*
-   * Sau khi check foundProduct,
-   * TypeScript hiểu product chắc chắn là Product.
+   * Related products
    */
+
   const product = foundProduct;
-
-  /*
-   * Kiểm tra sản phẩm đã có trong wishlist chưa
-   */
-  const isInWishlist = wishlistItems.some((item) => item.id === product.id);
-
-  /*
-   * Sản phẩm liên quan
-   */
   const relatedProducts = products
     .filter(
       (item) => item.category === product.category && item.id !== product.id,
@@ -86,20 +78,26 @@ export default function ProductDetailPage() {
   }
 
   function handleAddToCart() {
-    addToCart(product, quantity);
+    addToCart(product, quantity, selectedSize);
+
+    addToast(
+      quantity > 1 ? `${quantity} items added to cart` : "Added to cart",
+    );
   }
 
-  function handleAddToWishlist() {
-    if (!isInWishlist) {
-      addToWishlist(product);
+  function handleToggleWishlist() {
+    toggleWishlist(product);
+
+    if (isInWishlist) {
+      addToast("Removed from wishlist");
+    } else {
+      addToast("Added to wishlist");
     }
   }
 
   return (
     <section className="pb-16 pt-4 md:pt-6">
-      {/* ========================================
-          Breadcrumb
-      ======================================== */}
+      {/* Breadcrumb */}
       <nav
         aria-label="Breadcrumb"
         className="mb-8 flex items-center gap-2 overflow-hidden text-sm"
@@ -125,15 +123,11 @@ export default function ProductDetailPage() {
         <span className="truncate text-primary">{product.name}</span>
       </nav>
 
-      {/* ========================================
-          Main Product
-      ======================================== */}
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-14">
-        {/* ----------------------------------------
-            Product Image
-        ---------------------------------------- */}
-        <div className="lg:sticky lg:top-28 lg:self-start">
-          <div className="mx-auto max-w-[460px] overflow-hidden rounded-2xl bg-surface">
+      {/* Main product */}
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-14">
+        {/* Product image */}
+        <div className="lg:sticky lg:top-24 lg:self-start">
+          <div className="mx-auto max-w-[420px] overflow-hidden rounded-2xl bg-surface">
             <img
               src={product.image}
               alt={product.name}
@@ -142,10 +136,8 @@ export default function ProductDetailPage() {
           </div>
         </div>
 
-        {/* ----------------------------------------
-            Product Information
-        ---------------------------------------- */}
-        <div className="lg:pt-2">
+        {/* Product information */}
+        <div className="max-w-xl">
           {/* Category */}
           <Link
             to={`/products?category=${encodeURIComponent(product.category)}`}
@@ -154,7 +146,7 @@ export default function ProductDetailPage() {
             {product.category}
           </Link>
 
-          {/* Product Name */}
+          {/* Name */}
           <h1 className="mt-3 text-3xl font-bold leading-tight md:text-4xl">
             {product.name}
           </h1>
@@ -182,9 +174,7 @@ export default function ProductDetailPage() {
             </span>
           </div>
 
-          {/* ========================================
-              Description
-          ======================================== */}
+          {/* Description */}
           <div className="mt-8 border-t border-border pt-6">
             <h2 className="font-semibold">Description</h2>
 
@@ -197,13 +187,11 @@ export default function ProductDetailPage() {
             <p className="mt-3 leading-7 text-secondary">
               Designed with comfort and everyday versatility in mind, this piece
               can easily be styled with different outfits. Its minimal design
-              makes it suitable for both casual and everyday occasions.
+              makes it suitable for casual and everyday occasions.
             </p>
           </div>
 
-          {/* ========================================
-              Size
-          ======================================== */}
+          {/* Size */}
           <div className="mt-8">
             <div className="flex items-center justify-between">
               <h2 className="font-semibold">Size</h2>
@@ -216,7 +204,7 @@ export default function ProductDetailPage() {
               </button>
             </div>
 
-            <div className="mt-3 flex gap-2">
+            <div className="mt-3 flex flex-wrap gap-2">
               {sizes.map((size) => {
                 const isSelected = selectedSize === size;
 
@@ -225,6 +213,7 @@ export default function ProductDetailPage() {
                     key={size}
                     type="button"
                     onClick={() => setSelectedSize(size)}
+                    aria-pressed={isSelected}
                     className={`flex h-11 w-14 items-center justify-center rounded-lg border text-sm font-medium transition-colors ${
                       isSelected
                         ? "border-primary bg-primary text-background"
@@ -238,9 +227,7 @@ export default function ProductDetailPage() {
             </div>
           </div>
 
-          {/* ========================================
-              Quantity
-          ======================================== */}
+          {/* Quantity */}
           <div className="mt-8">
             <h2 className="font-semibold">Quantity</h2>
 
@@ -270,9 +257,7 @@ export default function ProductDetailPage() {
             </div>
           </div>
 
-          {/* ========================================
-              Actions
-          ======================================== */}
+          {/* Actions */}
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Button
               type="button"
@@ -284,30 +269,35 @@ export default function ProductDetailPage() {
 
             <button
               type="button"
-              onClick={handleAddToWishlist}
-              disabled={isInWishlist}
+              onClick={handleToggleWishlist}
+              aria-pressed={isInWishlist}
               className={`flex flex-1 items-center justify-center gap-2 rounded-lg border px-5 py-3 font-medium transition-colors ${
                 isInWishlist
-                  ? "cursor-default border-primary bg-surface"
+                  ? "border-primary bg-surface"
                   : "border-border hover:bg-surface"
               }`}
             >
               <span className="text-xl">{isInWishlist ? "♥" : "♡"}</span>
 
               <span>
-                {isInWishlist ? "Added to Wishlist" : "Add to Wishlist"}
+                {isInWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
               </span>
             </button>
           </div>
 
-          {/* ========================================
-              Product Information
-          ======================================== */}
+          {/* Product information */}
           <div className="mt-8 border-t border-border">
             <div className="flex items-center justify-between border-b border-border py-4 text-sm">
               <span className="text-secondary">Category</span>
 
-              <span className="font-medium capitalize">{product.category}</span>
+              <Link
+                to={`/products?category=${encodeURIComponent(
+                  product.category,
+                )}`}
+                className="font-medium capitalize transition-colors hover:text-secondary"
+              >
+                {product.category}
+              </Link>
             </div>
 
             <div className="flex items-center justify-between border-b border-border py-4 text-sm">
@@ -325,9 +315,7 @@ export default function ProductDetailPage() {
         </div>
       </div>
 
-      {/* ========================================
-          Product Details
-      ======================================== */}
+      {/* Product details */}
       <section className="mt-20 border-t border-border pt-12">
         <div className="max-w-3xl">
           <h2 className="text-heading-4 font-bold">Product Details</h2>
@@ -344,7 +332,6 @@ export default function ProductDetailPage() {
             style and comfort.
           </p>
 
-          {/* Product Attributes */}
           <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="rounded-xl bg-surface p-5">
               <p className="text-sm text-secondary">Category</p>
@@ -373,9 +360,7 @@ export default function ProductDetailPage() {
         </div>
       </section>
 
-      {/* ========================================
-          Related Products
-      ======================================== */}
+      {/* Related products */}
       {relatedProducts.length > 0 && (
         <section className="mt-20 border-t border-border pt-12">
           <div className="mb-7">

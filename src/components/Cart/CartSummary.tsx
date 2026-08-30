@@ -1,3 +1,6 @@
+import { Link } from "react-router-dom";
+import { useToast } from "../../hooks/useToast";
+
 type CartSummaryProps = {
   subtotal: number;
 };
@@ -5,6 +8,7 @@ type CartSummaryProps = {
 export default function CartSummary({ subtotal }: CartSummaryProps) {
   const shipping = 0;
   const total = subtotal + shipping;
+  const addToast = useToast((state) => state.addToast);
 
   return (
     <aside className="h-fit rounded-xl border border-border p-5 lg:sticky lg:top-28">
@@ -36,17 +40,18 @@ export default function CartSummary({ subtotal }: CartSummaryProps) {
 
       <button
         type="button"
+        onClick={() => addToast("Checkout is coming soon")}
         className="mt-6 flex w-full items-center justify-center rounded-lg bg-primary px-5 py-3 font-medium text-background transition-colors hover:bg-secondary"
       >
         Proceed to Checkout
       </button>
 
-      <a
-        href="/products"
+      <Link
+        to="/products"
         className="mt-3 flex w-full items-center justify-center rounded-lg border border-border px-5 py-3 text-sm font-medium transition-colors hover:bg-surface"
       >
         Continue Shopping
-      </a>
+      </Link>
 
       <p className="mt-5 text-center text-xs leading-5 text-secondary">
         Free shipping on all orders.

@@ -1,5 +1,6 @@
 import { BrowserRouter, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import ToastContainer from "./components/Toast/ToastContainer";
 
 import AppRouter from "./routes/AppRouter.tsx";
 import Container from "./components/Ui/Container.tsx";
@@ -35,6 +36,7 @@ function App() {
 
   return (
     <BrowserRouter basename="/nen-shop">
+      <ToastContainer />
       <div className="min-h-screen  bg-background">
         <aside
           className={`fixed left-0 top-0 z-50 h-screen w-64 bg-background p-6 shadow-xl transition-transform duration-300 md:hidden ${

@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
+
 import { useCartStore } from "../../store/cartStore";
 import type { CartItem as CartItemType } from "../../types/carts";
+import { useToast } from "../../hooks/useToast";
 
 type CartItemProps = {
   item: CartItemType;
@@ -13,18 +15,22 @@ export default function CartItem({ item }: CartItemProps) {
 
   const removeFromCart = useCartStore((state) => state.removeFromCart);
 
+  const addToast = useToast((state) => state.addToast);
+
   const itemTotal = item.price * item.quantity;
 
   function handleDecrease() {
-    decreaseQuantity(item.id);
+    decreaseQuantity(item.id, item.size);
   }
 
   function handleIncrease() {
-    increaseQuantity(item.id);
+    increaseQuantity(item.id, item.size);
   }
 
   function handleRemove() {
-    removeFromCart(item.id);
+    removeFromCart(item.id, item.size);
+
+    addToast(`${item.name} removed from cart`);
   }
 
   return (
@@ -41,9 +47,9 @@ export default function CartItem({ item }: CartItemProps) {
         />
       </Link>
 
-      {/* Product Content */}
+      {/* Content */}
       <div className="flex min-w-0 flex-1 flex-col">
-        {/* Top */}
+        {/* Product Info */}
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <Link
@@ -56,9 +62,14 @@ export default function CartItem({ item }: CartItemProps) {
             <p className="mt-1 text-sm capitalize text-secondary">
               {item.category}
             </p>
+
+            <p className="mt-1 text-sm text-secondary">
+              Size:{" "}
+              <span className="font-medium text-primary">{item.size}</span>
+            </p>
           </div>
 
-          {/* Price - Desktop */}
+          {/* Unit Price */}
           <p className="hidden shrink-0 font-semibold sm:block">
             ${item.price.toFixed(2)}
           </p>
@@ -96,9 +107,8 @@ export default function CartItem({ item }: CartItemProps) {
             </div>
           </div>
 
-          {/* Item Total + Remove */}
+          {/* Total */}
           <div className="flex flex-col items-end gap-2">
-            {/* Price - Mobile */}
             <p className="font-semibold sm:hidden">${item.price.toFixed(2)}</p>
 
             <p className="text-sm">
