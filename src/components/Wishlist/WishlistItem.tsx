@@ -6,6 +6,8 @@ import { useToast } from "../../hooks/useToast";
 
 import type { Product } from "../../types/products";
 
+import Button from "../Ui/Button";
+
 type WishlistItemProps = {
   item: Product;
 };
@@ -53,7 +55,7 @@ export default function WishlistItem({ item }: WishlistItemProps) {
           </p>
 
           <Link to={`/products/${item.id}`} className="mt-1 block">
-            <h2 className="truncate font-semibold transition-colors hover:text-secondary">
+            <h2 className="line-clamp-2 font-semibold transition-colors hover:text-secondary">
               {item.name}
             </h2>
           </Link>
@@ -63,13 +65,9 @@ export default function WishlistItem({ item }: WishlistItemProps) {
 
         {/* Actions */}
         <div className="mt-4 flex items-center gap-3">
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-background transition-colors hover:bg-secondary"
-          >
+          <Button type="button" onClick={handleAddToCart} size="small">
             Add to Cart
-          </button>
+          </Button>
 
           <button
             type="button"

@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom";
-import { useCartStore } from "../../store/cartStore.ts";
-import { useWishListStore } from "../../store/wishlistStore.ts";
-import { useToast } from "../../hooks/useToast";
-import type { Product } from "../../types/products.ts";
 
-import Button from "../Ui/Button.tsx";
-import Card from "../Ui/Card.tsx";
+import { useCartStore } from "../../store/cartStore";
+import { useWishListStore } from "../../store/wishlistStore";
+import { useToast } from "../../hooks/useToast";
+
+import type { Product } from "../../types/products";
+
+import Button from "../Ui/Button";
+import Card from "../Ui/Card";
 
 type ProductCardProps = {
   product: Product;
@@ -38,20 +40,22 @@ export default function ProductCard({ product }: ProductCardProps) {
   }
 
   return (
-    <Card className="flex flex-col gap-3 border p-2">
-      {/* Image */}
+    <Card className="flex flex-col gap-3 rounded-xl border p-2">
+      {/* Product Image */}
       <Link
         to={`/products/${product.id}`}
-        className="group relative overflow-hidden rounded"
+        className="group relative overflow-hidden rounded-lg"
+        aria-label={`View ${product.name}`}
       >
         <img
           src={product.image}
           alt={product.name}
+          loading="lazy"
           className="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
       </Link>
 
-      {/* Information */}
+      {/* Product Information */}
       <div>
         <h3 className="font-medium">{product.name}</h3>
 
@@ -65,12 +69,17 @@ export default function ProductCard({ product }: ProductCardProps) {
         <button
           type="button"
           onClick={handleToggleWishlist}
+          aria-label={
+            isInWishlist
+              ? `Remove ${product.name} from wishlist`
+              : `Add ${product.name} to wishlist`
+          }
+          aria-pressed={isInWishlist}
           className={`flex h-9 w-9 items-center justify-center rounded-full text-xl transition-colors ${
             isInWishlist
               ? "text-error"
               : "text-secondary hover:bg-surface hover:text-primary"
           }`}
-          aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
         >
           {isInWishlist ? "♥" : "♡"}
         </button>
@@ -83,8 +92,8 @@ export default function ProductCard({ product }: ProductCardProps) {
         </Link>
       </div>
 
-      {/* Cart */}
-      <Button onClick={handleAddToCart} className="w-full">
+      {/* Add to Cart */}
+      <Button type="button" onClick={handleAddToCart} className="w-full">
         Add to Cart
       </Button>
     </Card>

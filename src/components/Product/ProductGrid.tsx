@@ -1,5 +1,5 @@
-import type { Product } from "../../types/products.ts";
-import ProductCard from "./ProductCard.tsx";
+import type { Product } from "../../types/products";
+import ProductCard from "./ProductCard";
 
 type ProductGridProps = {
   products: Product[];

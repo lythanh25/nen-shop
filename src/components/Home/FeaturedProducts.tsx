@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 import ProductGrid from "../Product/ProductGrid";
 import products from "../../data/products";
 
@@ -15,12 +17,12 @@ export default function FeaturedProducts() {
           <p className="mt-2 text-secondary">Discover our latest collection.</p>
         </div>
 
-        <a
-          href="/products"
-          className="hidden text-sm font-medium underline underline-offset-4 sm:block"
+        <Link
+          to="/products"
+          className="hidden text-sm font-medium underline underline-offset-4 transition-opacity hover:opacity-60 sm:block"
         >
           View all
-        </a>
+        </Link>
       </div>
 
       <ProductGrid products={products.slice(0, 4)} />

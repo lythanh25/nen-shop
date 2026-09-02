@@ -1,12 +1,12 @@
 import { BrowserRouter, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import ToastContainer from "./components/Toast/ToastContainer";
 
 import AppRouter from "./routes/AppRouter.tsx";
 import Container from "./components/Ui/Container.tsx";
 import Header from "./components/layout/Header.tsx";
 import Button from "./components/Ui/Button.tsx";
 import Footer from "./components/layout/Footer.tsx";
+import ToastContainer from "./components/Toast/ToastContainer";
 
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,7 +19,7 @@ function App() {
     setIsMenuOpen(false);
   }
 
-  // Khi chuyển từ mobile -> desktop thì tự đóng menu
+  // Đóng mobile menu khi chuyển sang desktop
   useEffect(() => {
     function handleResize() {
       if (window.innerWidth >= 768) {
@@ -34,33 +34,51 @@ function App() {
     };
   }, []);
 
+  // Khóa scroll của body khi mobile menu đang mở
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMenuOpen]);
+
   return (
     <BrowserRouter basename="/nen-shop">
       <ToastContainer />
-      <div className="min-h-screen  bg-background">
+
+      <div className="min-h-screen bg-background">
+        {/* Mobile Menu */}
         <aside
+          aria-label="Mobile navigation"
           className={`fixed left-0 top-0 z-50 h-screen w-64 bg-background p-6 shadow-xl transition-transform duration-300 md:hidden ${
             isMenuOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
+          {/* Menu Header */}
           <div className="mb-10 flex items-center justify-between">
             <h2 className="text-xl font-bold">Menu</h2>
 
             <button
               type="button"
               onClick={closeMenu}
-              className="flex h-9 w-9 items-center justify-center text-2xl"
+              className="flex h-9 w-9 items-center justify-center rounded text-2xl transition-colors hover:bg-surface"
               aria-label="Close menu"
             >
-              x
+              ×
             </button>
           </div>
 
+          {/* Navigation */}
           <nav className="flex flex-col gap-6">
             <Link
               to="/"
               onClick={closeMenu}
-              className="font-medium hover:opacity-60"
+              className="font-medium transition-opacity hover:opacity-60"
             >
               Home
             </Link>
@@ -68,7 +86,7 @@ function App() {
             <Link
               to="/products"
               onClick={closeMenu}
-              className="font-medium hover:opacity-60"
+              className="font-medium transition-opacity hover:opacity-60"
             >
               Products
             </Link>
@@ -76,7 +94,7 @@ function App() {
             <Link
               to="/categories"
               onClick={closeMenu}
-              className="font-medium hover:opacity-60"
+              className="font-medium transition-opacity hover:opacity-60"
             >
               Categories
             </Link>
@@ -87,6 +105,7 @@ function App() {
           </nav>
         </aside>
 
+        {/* Overlay */}
         {isMenuOpen && (
           <button
             type="button"
@@ -96,15 +115,20 @@ function App() {
           />
         )}
 
+        {/* Main Content */}
         <div
           className={`min-h-screen transition-transform duration-300 md:translate-x-0 ${
             isMenuOpen ? "translate-x-64" : "translate-x-0"
           }`}
         >
           <Header onMenuToggle={toggleMenu} />
-          <Container>
-            <AppRouter />
-          </Container>
+
+          <main>
+            <Container>
+              <AppRouter />
+            </Container>
+          </main>
+
           <Footer />
         </div>
       </div>

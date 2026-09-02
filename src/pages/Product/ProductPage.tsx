@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
+
 import ProductGrid from "../../components/Product/ProductGrid";
 import products from "../../data/products";
 
@@ -33,18 +34,87 @@ const priceOptions: {
   },
 ];
 
+const sortOptions: {
+  value: SortOption;
+  label: string;
+}[] = [
+  {
+    value: "featured",
+    label: "Featured",
+  },
+  {
+    value: "price-low",
+    label: "Price: Low to High",
+  },
+  {
+    value: "price-high",
+    label: "Price: High to Low",
+  },
+  {
+    value: "name",
+    label: "Name",
+  },
+];
+
+const validSortOptions: SortOption[] = [
+  "featured",
+  "price-low",
+  "price-high",
+  "name",
+];
+
+const validPriceRanges: PriceRange[] = [
+  "all",
+  "under-50",
+  "50-100",
+  "100-200",
+  "over-200",
+];
+
+function matchesPriceRange(price: number, range: PriceRange): boolean {
+  switch (range) {
+    case "under-50":
+      return price < 50;
+
+    case "50-100":
+      return price >= 50 && price <= 100;
+
+    case "100-200":
+      return price > 100 && price <= 200;
+
+    case "over-200":
+      return price > 200;
+
+    case "all":
+    default:
+      return true;
+  }
+}
+
 export default function ProductPage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const search = searchParams.get("search") ?? "";
+  const search = searchParams.get("search")?.trim() ?? "";
 
   const category = searchParams.get("category") ?? "all";
 
-  const priceRange = (searchParams.get("price") as PriceRange) ?? "all";
+  const priceParam = searchParams.get("price");
 
-  const sortBy = (searchParams.get("sort") as SortOption) ?? "featured";
+  const sortParam = searchParams.get("sort");
 
-  const categories = [...new Set(products.map((product) => product.category))];
+  const priceRange: PriceRange = validPriceRanges.includes(
+    priceParam as PriceRange,
+  )
+    ? (priceParam as PriceRange)
+    : "all";
+
+  const sortBy: SortOption = validSortOptions.includes(sortParam as SortOption)
+    ? (sortParam as SortOption)
+    : "featured";
+
+  const categories = useMemo(() => {
+    return [...new Set(products.map((product) => product.category))];
+  }, []);
 
   const filteredProducts = useMemo(() => {
     let result = products.filter((product) => {
@@ -55,31 +125,11 @@ export default function ProductPage() {
       const matchesCategory =
         category === "all" || product.category === category;
 
-      return matchesSearch && matchesCategory;
+      const matchesPrice = matchesPriceRange(product.price, priceRange);
+
+      return matchesSearch && matchesCategory && matchesPrice;
     });
 
-    // Price
-    if (priceRange === "under-50") {
-      result = result.filter((product) => product.price < 50);
-    }
-
-    if (priceRange === "50-100") {
-      result = result.filter(
-        (product) => product.price >= 50 && product.price <= 100,
-      );
-    }
-
-    if (priceRange === "100-200") {
-      result = result.filter(
-        (product) => product.price > 100 && product.price <= 200,
-      );
-    }
-
-    if (priceRange === "over-200") {
-      result = result.filter((product) => product.price > 200);
-    }
-
-    // Sort
     if (sortBy === "price-low") {
       result = [...result].sort((a, b) => a.price - b.price);
     }
@@ -133,7 +183,7 @@ export default function ProductPage() {
     category !== "all" || priceRange !== "all" || sortBy !== "featured";
 
   const resultTitle = search
-    ? `Search results`
+    ? "Search Results"
     : category === "all"
       ? "All Products"
       : category;
@@ -163,7 +213,7 @@ export default function ProductPage() {
             <h2 className="mb-4 font-semibold">Categories</h2>
 
             <div className="flex flex-col gap-1">
-              {/* All */}
+              {/* All Products */}
               <button
                 type="button"
                 onClick={() => handleCategoryChange("all")}
@@ -251,19 +301,18 @@ export default function ProductPage() {
             </div>
 
             <select
+              aria-label="Sort products"
               value={sortBy}
               onChange={(event) =>
                 handleSortChange(event.target.value as SortOption)
               }
               className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none transition-colors focus:border-primary"
             >
-              <option value="featured">Featured</option>
-
-              <option value="price-low">Price: Low to High</option>
-
-              <option value="price-high">Price: High to Low</option>
-
-              <option value="name">Name</option>
+              {sortOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -276,7 +325,9 @@ export default function ProductPage() {
                 <h3 className="font-semibold">No products found</h3>
 
                 <p className="mt-2 text-sm text-secondary">
-                  Try changing your search or filters.
+                  {search
+                    ? `No products match "${search}".`
+                    : "Try changing your search or filters."}
                 </p>
 
                 <button

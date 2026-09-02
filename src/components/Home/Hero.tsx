@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 import Button from "../Ui/Button";
+import heroImage from "../../assets/images/hero-fashion.jpg";
 
 export default function Hero() {
   return (
     <section className="relative mt-2 min-h-[500px] overflow-hidden rounded-xl">
       <img
-        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTr_NdKlJNES2EhMaGBSngr8SiG6TCpLH9KDDielxaoeA&s=10"
+        src={heroImage}
         alt="Modern fashion"
         className="absolute inset-0 h-full w-full object-cover"
       />
@@ -16,7 +17,7 @@ export default function Hero() {
         <div className="flex max-w-lg flex-col gap-3 text-white">
           <p className="text-sm font-medium tracking-widest">NEW COLLECTION</p>
 
-          <h2 className="text-heading-2 font-bold">MODERN FASHION</h2>
+          <h1 className="text-heading-2 font-bold">MODERN FASHION</h1>
 
           <p className="max-w-md">
             Discover premium fashion and accessories that complement your
@@ -24,7 +25,7 @@ export default function Hero() {
           </p>
 
           <Link to="/products">
-            <Button className="mt-2 flex items-center gap-3">
+            <Button className="mt-2 gap-3">
               Shop Now
               <svg
                 xmlns="http://www.w3.org/2000/svg"
