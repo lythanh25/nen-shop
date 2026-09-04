@@ -6,6 +6,8 @@ import CartPage from "../pages/Cart/CartPage";
 import WishlistPage from "../pages/Wishlist/WishlistPage";
 import ProductDetailPage from "../pages/Product/ProductDetailPage";
 import NotFoundPage from "../pages/NotFound/NotFoundPage";
+import CheckoutPage from "../pages/Checkout/CheckoutPage";
+import OrderSuccessPage from "../pages/OrderSuccess/OrderSuccessPage";
 
 export default function AppRouter() {
   return (
@@ -17,6 +19,8 @@ export default function AppRouter() {
       <Route path="/carts" element={<CartPage />} />
       <Route path="/wishlists" element={<WishlistPage />} />
       <Route path="*" element={<NotFoundPage />} />
+      <Route path="/checkout" element={<CheckoutPage />} />
+      <Route path="/order-success" element={<OrderSuccessPage />} />
     </Routes>
   );
 }
